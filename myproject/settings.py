@@ -7,29 +7,47 @@ import os
 from dotenv import load_dotenv
 
 
-# Build paths inside the project
+# =====================================
+# BASE DIRECTORIES
+# =====================================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 TEMP_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 MEDIA_DIR = BASE_DIR / "media"
 
-# Load environment variables
+
+# Load .env file
 load_dotenv(BASE_DIR / ".env")
 
 
-# Security
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-this-key")
+# =====================================
+# SECURITY
+# =====================================
 
-DEBUG = os.getenv("DEBUG", "False") == "True"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-change-this-key"
+)
 
-# Render deployment
-ALLOWED_HOSTS = ["*"]
+DEBUG = os.getenv(
+    "DEBUG",
+    "False"
+) == "True"
 
 
-# Application definition
+ALLOWED_HOSTS = [
+    "*"
+]
+
+
+# =====================================
+# APPLICATIONS
+# =====================================
 
 INSTALLED_APPS = [
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -37,76 +55,114 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Custom apps
+    # Third party
+    "whitenoise.runserver_nostatic",
+
+    # Local apps
     "myapp",
 ]
 
 
-# Middleware
+# =====================================
+# MIDDLEWARE
+# =====================================
 
 MIDDLEWARE = [
+
     "django.middleware.security.SecurityMiddleware",
 
-    # Static files for Render
+    # Render Static Files
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
+
     "django.middleware.common.CommonMiddleware",
+
     "django.middleware.csrf.CsrfViewMiddleware",
 
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
     "django.contrib.messages.middleware.MessageMiddleware",
 
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 
+# =====================================
+# URL CONFIG
+# =====================================
+
 ROOT_URLCONF = "myproject.urls"
 
 
-# Templates
+# =====================================
+# TEMPLATES
+# =====================================
 
 TEMPLATES = [
+
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "BACKEND":
+        "django.template.backends.django.DjangoTemplates",
 
         "DIRS": [
-            TEMP_DIR,
+            TEMP_DIR
         ],
 
         "APP_DIRS": True,
 
+
         "OPTIONS": {
+
             "context_processors": [
+
                 "django.template.context_processors.debug",
+
                 "django.template.context_processors.request",
 
                 "django.contrib.auth.context_processors.auth",
 
                 "django.contrib.messages.context_processors.messages",
+
             ],
+
         },
+
     },
+
 ]
 
 
 WSGI_APPLICATION = "myproject.wsgi.application"
 
 
-# Database
+
+# =====================================
+# DATABASE
+# =====================================
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
 
-        "NAME": BASE_DIR / "db.sqlite3",
+    "default": {
+
+        "ENGINE":
+        "django.db.backends.sqlite3",
+
+        "NAME":
+        BASE_DIR / "db.sqlite3",
+
     }
+
 }
 
 
-# Password validation
+
+# =====================================
+# PASSWORD VALIDATION
+# =====================================
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
         "NAME":
         "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -126,10 +182,14 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME":
         "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+
 ]
 
 
-# Internationalization
+
+# =====================================
+# LANGUAGE / TIME
+# =====================================
 
 LANGUAGE_CODE = "en-us"
 
@@ -140,57 +200,98 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files configuration for Render
+
+# =====================================
+# STATIC FILES
+# =====================================
 
 STATIC_URL = "/static/"
 
+
 STATICFILES_DIRS = [
+
     STATIC_DIR,
+
 ]
+
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# Media files
-
-MEDIA_URL = "/media/"
-
-MEDIA_ROOT = MEDIA_DIR
-
-
-# Use compressed static files with WhiteNoise
 
 STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
 
 
-# Default primary key
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# =====================================
+# MEDIA FILES
+# =====================================
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = MEDIA_DIR
 
 
 
-# Email Configuration (Brevo SMTP)
+# =====================================
+# EMAIL CONFIGURATION
+# BREVO SMTP
+# =====================================
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend"
+)
 
-EMAIL_HOST = "smtp-relay.brevo.com"
+
+EMAIL_HOST = (
+    "smtp-relay.brevo.com"
+)
+
+
 EMAIL_PORT = 587
 
+
 EMAIL_USE_TLS = True
+
+
 EMAIL_USE_SSL = False
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-# Email receiver
+
+EMAIL_HOST_USER = os.getenv(
+    "EMAIL_HOST_USER"
+)
+
+
+EMAIL_HOST_PASSWORD = os.getenv(
+    "EMAIL_HOST_PASSWORD"
+)
+
+
+
+# Receiver email
 HOST_USER_RECIPIENT = os.getenv(
     "HOST_USER_RECIPIENT",
     "chavansuyog2005@gmail.com"
 )
 
+
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# Increase SMTP connection timeout
+
+
+# SMTP timeout
 EMAIL_TIMEOUT = 120
+
+
+
+# =====================================
+# DEFAULT PRIMARY KEY
+# =====================================
+
+DEFAULT_AUTO_FIELD = (
+    "django.db.models.BigAutoField"
+)
