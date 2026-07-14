@@ -69,4 +69,4 @@ Follow these steps to run the project locally:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/Python-Django-Blog-Website.git
+git clone https://github.com/SuyogChavan2005/Django-Blog-Website.git
