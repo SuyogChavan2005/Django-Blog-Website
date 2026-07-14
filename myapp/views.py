@@ -4,8 +4,10 @@ from django.contrib.auth import authenticate
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
+import threading
 
 from .models import *
+
 
 
 # ===============================
@@ -32,6 +34,7 @@ def index(request):
 
         'media_url':
             settings.MEDIA_URL
+
     })
 
 
@@ -42,7 +45,7 @@ def index(request):
 
 def signup(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         username = request.POST['username']
         email = request.POST['email']
@@ -52,6 +55,7 @@ def signup(request):
 
         if password == password2:
 
+
             if User.objects.filter(username=username).exists():
 
                 messages.info(
@@ -59,7 +63,8 @@ def signup(request):
                     "Username already Exists"
                 )
 
-                return redirect('signup')
+                return redirect("signup")
+
 
 
             if User.objects.filter(email=email).exists():
@@ -69,17 +74,23 @@ def signup(request):
                     "Email already Exists"
                 )
 
-                return redirect('signup')
+                return redirect("signup")
+
 
 
             User.objects.create_user(
+
                 username=username,
+
                 email=email,
+
                 password=password
+
             ).save()
 
 
-            return redirect('signin')
+            return redirect("signin")
+
 
 
         else:
@@ -89,10 +100,14 @@ def signup(request):
                 "Password should match"
             )
 
-            return redirect('signup')
+            return redirect("signup")
 
 
-    return render(request,"signup.html")
+
+    return render(
+        request,
+        "signup.html"
+    )
 
 
 
@@ -102,20 +117,26 @@ def signup(request):
 
 def signin(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        username = request.POST['username']
-        password = request.POST['password']
+        username=request.POST['username']
+
+        password=request.POST['password']
 
 
-        user = authenticate(
+        user=authenticate(
+
             request,
+
             username=username,
+
             password=password
+
         )
 
 
-        if user is not None:
+
+        if user:
 
             auth.login(
                 request,
@@ -128,14 +149,21 @@ def signin(request):
         else:
 
             messages.info(
+
                 request,
+
                 "Username or Password is incorrect"
+
             )
 
             return redirect("signin")
 
 
-    return render(request,"signin.html")
+
+    return render(
+        request,
+        "signin.html"
+    )
 
 
 
@@ -147,7 +175,7 @@ def logout(request):
 
     auth.logout(request)
 
-    return redirect('index')
+    return redirect("index")
 
 
 
@@ -190,7 +218,7 @@ def blog(request):
 
 def create(request):
 
-    if request.method == "POST":
+    if request.method=="POST":
 
         try:
 
@@ -214,10 +242,14 @@ def create(request):
             print(e)
 
 
+
         return redirect("index")
 
 
-    return render(request,"create.html")
+    return render(
+        request,
+        "create.html"
+    )
 
 
 
@@ -229,13 +261,13 @@ def profile(request,id):
 
     return render(request,"profile.html",{
 
-        'user':
+        "user":
             User.objects.get(id=id),
 
-        'posts':
+        "posts":
             Post.objects.all(),
 
-        'media_url':
+        "media_url":
             settings.MEDIA_URL
 
     })
@@ -250,27 +282,26 @@ def profileedit(request,id):
 
     if request.method=="POST":
 
+        user=User.objects.get(id=id)
 
-        user = User.objects.get(id=id)
+        user.first_name=request.POST['firstname']
 
+        user.last_name=request.POST['lastname']
 
-        user.first_name = request.POST['firstname']
-
-        user.last_name = request.POST['lastname']
-
-        user.email = request.POST['email']
-
+        user.email=request.POST['email']
 
         user.save()
 
 
-        return profile(request,id)
-
+        return profile(
+            request,
+            id
+        )
 
 
     return render(request,"profileedit.html",{
 
-        'user':
+        "user":
             User.objects.get(id=id)
 
     })
@@ -278,16 +309,16 @@ def profileedit(request,id):
 
 
 # ===============================
-# LIKE POST
+# LIKE
 # ===============================
 
 def increaselikes(request,id):
 
     if request.method=="POST":
 
-        post = Post.objects.get(id=id)
+        post=Post.objects.get(id=id)
 
-        post.likes += 1
+        post.likes+=1
 
         post.save()
 
@@ -302,7 +333,7 @@ def increaselikes(request,id):
 
 def post(request,id):
 
-    post = Post.objects.get(id=id)
+    post=Post.objects.get(id=id)
 
 
     return render(request,"post-details.html",{
@@ -310,24 +341,19 @@ def post(request,id):
         "user":
             request.user,
 
-
         "post":
             post,
-
 
         "recent_posts":
             Post.objects.all().order_by("-id"),
 
-
         "media_url":
             settings.MEDIA_URL,
-
 
         "comments":
             Comment.objects.filter(
                 post_id=post.id
             ),
-
 
         "total_comments":
             Comment.objects.filter(
@@ -344,7 +370,7 @@ def post(request,id):
 
 def savecomment(request,id):
 
-    post = Post.objects.get(id=id)
+    post=Post.objects.get(id=id)
 
 
     if request.method=="POST":
@@ -366,14 +392,17 @@ def savecomment(request,id):
 
 def deletecomment(request,id):
 
-    comment = Comment.objects.get(id=id)
+    comment=Comment.objects.get(id=id)
 
-    postid = comment.post.id
+    postid=comment.post.id
 
     comment.delete()
 
 
-    return post(request,postid)
+    return post(
+        request,
+        postid
+    )
 
 
 
@@ -383,7 +412,7 @@ def deletecomment(request,id):
 
 def editpost(request,id):
 
-    post = Post.objects.get(id=id)
+    post=Post.objects.get(id=id)
 
 
     if request.method=="POST":
@@ -429,42 +458,16 @@ def deletepost(request,id):
 
 
 
-# ===============================
-# CONTACT FORM + BREVO SMTP
-# ===============================
+# =================================================
+# SEND EMAIL FUNCTION (BACKGROUND THREAD)
+# =================================================
 
-def contact_us(request):
+def send_contact_email(name,email,subject,message):
 
-    if request.method=="POST":
-
-
-        name=request.POST.get("name")
-
-        email=request.POST.get("email")
-
-        subject=request.POST.get("subject")
-
-        message=request.POST.get("message")
+    try:
 
 
-
-        try:
-
-            Contact.objects.create(
-
-                name=name,
-
-                email=email,
-
-                subject=subject,
-
-                message=message
-
-            )
-
-
-
-            email_message=f"""
+        email_body=f"""
 
 New Contact Form Submission
 
@@ -487,41 +490,95 @@ Message:
 """
 
 
+        send_mail(
 
-            try:
+            subject=f"New Contact Form: {subject}",
 
+            message=email_body,
 
-                send_mail(
+            from_email=settings.DEFAULT_FROM_EMAIL,
 
-                    subject=f"New Contact Form: {subject}",
+            recipient_list=[
+                settings.HOST_USER_RECIPIENT
+            ],
 
+            fail_silently=False
 
-                    message=email_message,
-
-
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-
-
-                    recipient_list=[
-
-                        "chavansuyog2005@gmail.com"
-
-                    ],
+        )
 
 
-                    fail_silently=True
+        print(
+            "EMAIL SENT SUCCESSFULLY"
+        )
+
+
+    except Exception as e:
+
+
+        print(
+            "EMAIL ERROR:",
+            e
+        )
+
+
+
+
+# ===============================
+# CONTACT PAGE
+# ===============================
+
+def contact_us(request):
+
+    if request.method=="POST":
+
+
+        name=request.POST.get("name")
+
+        email=request.POST.get("email")
+
+        subject=request.POST.get("subject")
+
+        message=request.POST.get("message")
+
+
+
+        try:
+
+
+            Contact.objects.create(
+
+                name=name,
+
+                email=email,
+
+                subject=subject,
+
+                message=message
+
+            )
+
+
+
+            thread=threading.Thread(
+
+                target=send_contact_email,
+
+                args=(
+
+                    name,
+
+                    email,
+
+                    subject,
+
+                    message
 
                 )
 
+            )
 
 
-            except Exception as email_error:
-
-
-                print(
-                    "EMAIL ERROR:",
-                    email_error
-                )
+            thread.start()
 
 
 
