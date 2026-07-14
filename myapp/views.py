@@ -2,38 +2,75 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import authenticate
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.mail import send_mail
 
 from .models import *
 
 
+# ===============================
+# HOME PAGE
+# ===============================
+
 def index(request):
+
     return render(request, "index.html", {
-        'posts': Post.objects.filter(user_id=request.user.id).order_by("id").reverse(),
-        'top_posts': Post.objects.all().order_by("-likes"),
-        'recent_posts': Post.objects.all().order_by("-id"),
-        'user': request.user,
-        'media_url': settings.MEDIA_URL
+
+        'posts':
+            Post.objects.filter(
+                user_id=request.user.id
+            ).order_by("id").reverse(),
+
+        'top_posts':
+            Post.objects.all().order_by("-likes"),
+
+        'recent_posts':
+            Post.objects.all().order_by("-id"),
+
+        'user':
+            request.user,
+
+        'media_url':
+            settings.MEDIA_URL
     })
 
 
+
+# ===============================
+# SIGNUP
+# ===============================
+
 def signup(request):
+
     if request.method == 'POST':
+
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
         password2 = request.POST['password2']
 
+
         if password == password2:
+
             if User.objects.filter(username=username).exists():
-                messages.info(request, "Username already Exists")
+
+                messages.info(
+                    request,
+                    "Username already Exists"
+                )
+
                 return redirect('signup')
 
+
             if User.objects.filter(email=email).exists():
-                messages.info(request, "Email already Exists")
+
+                messages.info(
+                    request,
+                    "Email already Exists"
+                )
+
                 return redirect('signup')
+
 
             User.objects.create_user(
                 username=username,
@@ -41,20 +78,35 @@ def signup(request):
                 password=password
             ).save()
 
+
             return redirect('signin')
 
+
         else:
-            messages.info(request, "Password should match")
+
+            messages.info(
+                request,
+                "Password should match"
+            )
+
             return redirect('signup')
 
-    return render(request, "signup.html")
 
+    return render(request,"signup.html")
+
+
+
+# ===============================
+# LOGIN
+# ===============================
 
 def signin(request):
+
     if request.method == 'POST':
 
         username = request.POST['username']
         password = request.POST['password']
+
 
         user = authenticate(
             request,
@@ -62,145 +114,257 @@ def signin(request):
             password=password
         )
 
+
         if user is not None:
-            auth.login(request, user)
+
+            auth.login(
+                request,
+                user
+            )
+
             return redirect("index")
 
+
         else:
+
             messages.info(
                 request,
-                'Username or Password is incorrect'
+                "Username or Password is incorrect"
             )
+
             return redirect("signin")
 
-    return render(request, "signin.html")
 
+    return render(request,"signin.html")
+
+
+
+# ===============================
+# LOGOUT
+# ===============================
 
 def logout(request):
+
     auth.logout(request)
+
     return redirect('index')
 
 
+
+# ===============================
+# BLOG
+# ===============================
+
 def blog(request):
-    return render(request, "blog.html", {
-        'posts': Post.objects.filter(user_id=request.user.id).order_by("id").reverse(),
-        'top_posts': Post.objects.all().order_by("-likes"),
-        'recent_posts': Post.objects.all().order_by("-id"),
-        'user': request.user,
-        'media_url': settings.MEDIA_URL
-    })
+
+    return render(request,"blog.html",{
+
+        'posts':
+            Post.objects.filter(
+                user_id=request.user.id
+            ).order_by("id").reverse(),
 
 
-def create(request):
+        'top_posts':
+            Post.objects.all().order_by("-likes"),
 
-    if request.method == 'POST':
-
-        try:
-            postname = request.POST['postname']
-            content = request.POST['content']
-            category = request.POST['category']
-            image = request.FILES['image']
-
-            Post.objects.create(
-                postname=postname,
-                content=content,
-                category=category,
-                image=image,
-                user=request.user
-            )
-
-        except Exception as e:
-            print(e)
-
-        return redirect('index')
-
-    return render(request, "create.html")
-
-
-def profile(request, id):
-
-    return render(request, 'profile.html', {
-        'user': User.objects.get(id=id),
-        'posts': Post.objects.all(),
-        'media_url': settings.MEDIA_URL,
-    })
-
-
-def profileedit(request, id):
-
-    if request.method == 'POST':
-
-        firstname = request.POST['firstname']
-        lastname = request.POST['lastname']
-        email = request.POST['email']
-
-        user = User.objects.get(id=id)
-
-        user.first_name = firstname
-        user.last_name = lastname
-        user.email = email
-
-        user.save()
-
-        return profile(request, id)
-
-    return render(request, "profileedit.html", {
-        'user': User.objects.get(id=id),
-    })
-
-
-def increaselikes(request, id):
-
-    if request.method == 'POST':
-
-        post = Post.objects.get(id=id)
-        post.likes += 1
-        post.save()
-
-    return redirect("index")
-
-
-def post(request, id):
-
-    post = Post.objects.get(id=id)
-
-    return render(request, "post-details.html", {
-
-        "user": request.user,
-        "post": post,
 
         'recent_posts':
             Post.objects.all().order_by("-id"),
 
+
+        'user':
+            request.user,
+
+
         'media_url':
-            settings.MEDIA_URL,
+            settings.MEDIA_URL
 
-        'comments':
-            Comment.objects.filter(post_id=post.id),
-
-        'total_comments':
-            len(Comment.objects.filter(post_id=post.id))
     })
 
 
-def savecomment(request, id):
 
-    post = Post.objects.get(id=id)
+# ===============================
+# CREATE POST
+# ===============================
 
-    if request.method == 'POST':
+def create(request):
 
-        content = request.POST['message']
+    if request.method == "POST":
 
-        Comment.objects.create(
-            post_id=post.id,
-            user_id=request.user.id,
-            content=content
-        )
+        try:
+
+            Post.objects.create(
+
+                postname=request.POST['postname'],
+
+                content=request.POST['content'],
+
+                category=request.POST['category'],
+
+                image=request.FILES['image'],
+
+                user=request.user
+
+            )
+
+
+        except Exception as e:
+
+            print(e)
+
 
         return redirect("index")
 
 
-def deletecomment(request, id):
+    return render(request,"create.html")
+
+
+
+# ===============================
+# PROFILE
+# ===============================
+
+def profile(request,id):
+
+    return render(request,"profile.html",{
+
+        'user':
+            User.objects.get(id=id),
+
+        'posts':
+            Post.objects.all(),
+
+        'media_url':
+            settings.MEDIA_URL
+
+    })
+
+
+
+# ===============================
+# PROFILE EDIT
+# ===============================
+
+def profileedit(request,id):
+
+    if request.method=="POST":
+
+
+        user = User.objects.get(id=id)
+
+
+        user.first_name = request.POST['firstname']
+
+        user.last_name = request.POST['lastname']
+
+        user.email = request.POST['email']
+
+
+        user.save()
+
+
+        return profile(request,id)
+
+
+
+    return render(request,"profileedit.html",{
+
+        'user':
+            User.objects.get(id=id)
+
+    })
+
+
+
+# ===============================
+# LIKE POST
+# ===============================
+
+def increaselikes(request,id):
+
+    if request.method=="POST":
+
+        post = Post.objects.get(id=id)
+
+        post.likes += 1
+
+        post.save()
+
+
+    return redirect("index")
+
+
+
+# ===============================
+# POST DETAILS
+# ===============================
+
+def post(request,id):
+
+    post = Post.objects.get(id=id)
+
+
+    return render(request,"post-details.html",{
+
+        "user":
+            request.user,
+
+
+        "post":
+            post,
+
+
+        "recent_posts":
+            Post.objects.all().order_by("-id"),
+
+
+        "media_url":
+            settings.MEDIA_URL,
+
+
+        "comments":
+            Comment.objects.filter(
+                post_id=post.id
+            ),
+
+
+        "total_comments":
+            Comment.objects.filter(
+                post_id=post.id
+            ).count()
+
+    })
+
+
+
+# ===============================
+# COMMENT
+# ===============================
+
+def savecomment(request,id):
+
+    post = Post.objects.get(id=id)
+
+
+    if request.method=="POST":
+
+        Comment.objects.create(
+
+            post_id=post.id,
+
+            user_id=request.user.id,
+
+            content=request.POST['message']
+
+        )
+
+
+    return redirect("index")
+
+
+
+def deletecomment(request,id):
 
     comment = Comment.objects.get(id=id)
 
@@ -208,109 +372,186 @@ def deletecomment(request, id):
 
     comment.delete()
 
-    return post(request, postid)
 
-
-def editpost(request, id):
-
-    post = Post.objects.get(id=id)
-
-    if request.method == 'POST':
-
-        post.postname = request.POST['postname']
-        post.content = request.POST['content']
-        post.category = request.POST['category']
-
-        post.save()
-
-        return profile(request, request.user.id)
-
-    return render(request, "postedit.html", {
-        'post': post
-    })
-
-
-def deletepost(request, id):
-
-    Post.objects.get(id=id).delete()
-
-    return profile(request, request.user.id)
+    return post(request,postid)
 
 
 
 # ===============================
-# CONTACT FORM WITH BREVO SMTP
+# EDIT POST
+# ===============================
+
+def editpost(request,id):
+
+    post = Post.objects.get(id=id)
+
+
+    if request.method=="POST":
+
+
+        post.postname=request.POST['postname']
+
+        post.content=request.POST['content']
+
+        post.category=request.POST['category']
+
+
+        post.save()
+
+
+        return profile(
+            request,
+            request.user.id
+        )
+
+
+    return render(request,"postedit.html",{
+
+        "post":post
+
+    })
+
+
+
+# ===============================
+# DELETE POST
+# ===============================
+
+def deletepost(request,id):
+
+    Post.objects.get(id=id).delete()
+
+
+    return profile(
+        request,
+        request.user.id
+    )
+
+
+
+# ===============================
+# CONTACT FORM + BREVO SMTP
 # ===============================
 
 def contact_us(request):
 
-    if request.method == "POST":
+    if request.method=="POST":
 
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        subject = request.POST.get("subject")
-        message = request.POST.get("message")
+
+        name=request.POST.get("name")
+
+        email=request.POST.get("email")
+
+        subject=request.POST.get("subject")
+
+        message=request.POST.get("message")
+
 
 
         try:
 
-            # Save contact message
             Contact.objects.create(
+
                 name=name,
+
                 email=email,
+
                 subject=subject,
+
                 message=message
+
             )
 
 
-            email_message = f"""
+
+            email_message=f"""
+
 New Contact Form Submission
+
 
 Name:
 {name}
 
+
 Email:
 {email}
+
 
 Subject:
 {subject}
 
+
 Message:
 {message}
+
 """
 
 
-            # Send email using Brevo SMTP
-            send_mail(
 
-                subject=f"New Contact Form: {subject}",
+            try:
 
-                message=email_message,
 
-                from_email=settings.EMAIL_HOST_USER,
+                send_mail(
 
-                recipient_list=[
-                    settings.HOST_USER_RECIPIENT
-                ],
+                    subject=f"New Contact Form: {subject}",
 
-                fail_silently=False,
-            )
+
+                    message=email_message,
+
+
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+
+
+                    recipient_list=[
+
+                        "chavansuyog2005@gmail.com"
+
+                    ],
+
+
+                    fail_silently=True
+
+                )
+
+
+
+            except Exception as email_error:
+
+
+                print(
+                    "EMAIL ERROR:",
+                    email_error
+                )
+
 
 
             messages.success(
+
                 request,
+
                 "Thanks for contacting us!"
+
             )
+
 
 
         except Exception as e:
 
-            print("EMAIL ERROR:", e)
+
+            print(
+                "CONTACT ERROR:",
+                e
+            )
+
 
             messages.error(
+
                 request,
-                "Message saved but email sending failed."
+
+                "Something went wrong."
+
             )
+
 
 
     return render(
