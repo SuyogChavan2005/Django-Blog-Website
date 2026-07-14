@@ -9,12 +9,7 @@ A full-featured Blog Application built using Django that allows users to registe
 </a>
 
 </div>
-<img width="660" height="405" alt="image" src="https://github.com/user-attachments/assets/5461707e-fce0-458d-b4ec-819339c15650" />
-<img width="674" height="373" alt="image" src="https://github.com/user-attachments/assets/31d7e002-4a05-43f7-b4c6-af30589d12e3" />
-<img width="673" height="621" alt="image" src="https://github.com/user-attachments/assets/1e86c278-5ce1-45b1-83f4-381bf9af15e0" />
-<img width="772" height="623" alt="image" src="https://github.com/user-attachments/assets/3a06cdb9-2a7f-4c0f-abdc-9d239fde1eeb" />
-<img width="563" height="424" alt="image" src="https://github.com/user-attachments/assets/01beceb4-0941-4f08-99a7-f7972f626fcb" />
-<img width="1129" height="431" alt="image" src="https://github.com/user-attachments/assets/cb3d5406-c47a-4a2b-b418-dc079e02cf5d" />
+
 
 
 
@@ -26,6 +21,15 @@ Python Django Blog Website is a dynamic blogging platform developed using the Dj
 The application provides an interactive user interface where users can explore blog posts, create their own content, and manage their profiles.
 
 The project includes a secure authentication system, CRUD operations for blog posts, image uploading, and a Django admin panel to manage users and website content.
+
+<br>
+
+<img width="660" height="405" alt="image" src="https://github.com/user-attachments/assets/5461707e-fce0-458d-b4ec-819339c15650" />
+<img width="674" height="373" alt="image" src="https://github.com/user-attachments/assets/31d7e002-4a05-43f7-b4c6-af30589d12e3" />
+<img width="673" height="621" alt="image" src="https://github.com/user-attachments/assets/1e86c278-5ce1-45b1-83f4-381bf9af15e0" />
+<img width="772" height="623" alt="image" src="https://github.com/user-attachments/assets/3a06cdb9-2a7f-4c0f-abdc-9d239fde1eeb" />
+<img width="563" height="424" alt="image" src="https://github.com/user-attachments/assets/01beceb4-0941-4f08-99a7-f7972f626fcb" />
+<img width="1129" height="431" alt="image" src="https://github.com/user-attachments/assets/cb3d5406-c47a-4a2b-b418-dc079e02cf5d" />
 
 <br>
 
