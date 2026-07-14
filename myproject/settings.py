@@ -191,3 +191,6 @@ HOST_USER_RECIPIENT = os.getenv(
 )
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Increase SMTP connection timeout
+EMAIL_TIMEOUT = 120
