@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="TemplateMo">
+<title>Edit Profile</title>
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap" rel="stylesheet">
+
+<!-- Bootstrap 4 -->
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'assets/css/fontawesome.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/templatemo-stand-blog.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/owl.css' %}">
+
+<style>
+body{background:#fff;}
+form{margin-top:200px;width:50%;}
+h5{color:#ed3f3f;font-weight:500;font-size:30px;margin-bottom:20px;}
+.btn{margin-top:30px;background:#ec5858;width:100%;color:#fff;font-size:20px;padding:8px;}
+.btn:hover{background:transparent;color:#ed3f3f;border:1px solid #ed3f3f;}
+a{text-decoration:none;}
+.navbar-toggler{border:1px solid #000;}
+.navbar-toggler-icon{
+display:inline-block;width:24px;height:24px;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(0,0,0,.8)' stroke-linecap='round' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+background-repeat:no-repeat;background-position:center;background-size:100%;
+}
+@media(max-width:600px){form{width:100%;margin-top:120px;}}
+</style>
+</head>
+<body>
+
+<header>
+<nav class="navbar navbar-expand-lg bg-white">
+<div class="container">
+<a class="navbar-brand" href="{% url 'index' %}">
+<h2 style="color: #000;">SSC <span style="color:#f16e46;">BLOG</span></h2>
+</a>
+
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarResponsive">
+<ul class="navbar-nav ml-auto">
+<li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="{% url 'blog' %}">Blogs</a></li>
+
+{% if user.is_authenticated %}
+<li class="nav-item"><a class="nav-link" href="{% url 'create' %}">Create</a></li>
+<li class="nav-item"><a class="nav-link" href="{% url 'profile' user.id %}">Profile</a></li>
+<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+{% else %}
+<li class="nav-item"><a class="nav-link" href="{% url 'signin' %}">Login</a></li>
+{% endif %}
+</ul>
+</div>
+</div>
+</nav>
+</header>
+
+<div class="container">
+<div class="d-flex justify-content-center align-items-center" style="height:100vh;">
+<form action="{% url 'profileedit' user.id %}" class="p-5 shadow" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<h5 class="pb-2">Update Profile</h5>
+
+<label class="form-label">Username</label>
+<div class="input-group mb-3">
+<span class="input-group-text">@</span>
+<input type="text" class="form-control" value="{{ user.username }}" disabled>
+</div>
+
+<label class="form-label">Firstname</label>
+<input type="text" class="form-control mb-3" name="firstname" value="{{ user.first_name }}" required>
+
+<label class="form-label">Lastname</label>
+<input type="text" class="form-control mb-3" name="lastname" value="{{ user.last_name }}" required>
+
+<label class="form-label">Email</label>
+<input type="email" class="form-control mb-3" name="email" value="{{ user.email }}" required>
+
+<button type="submit" class="btn">Update Profile</button>
+
+{% for message in messages %}
+<p class="text-danger mt-3">{{ message }}</p>
+{% endfor %}
+</form>
+</div>
+</div>
+
+{% include 'footer.html' %}
+
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/custom.js' %}"></script>
+<script src="{% static 'assets/js/owl.js' %}"></script>
+<script src="{% static 'assets/js/slick.js' %}"></script>
+<script src="{% static 'assets/js/isotope.js' %}"></script>
+<script src="{% static 'assets/js/accordions.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<style>
+    footer {
+        background: #232323;
+        color: #fff;
+        padding: 60px 0 20px;
+        margin-top: 50px;
+    }
+
+    footer h4 {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    footer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    footer ul li {
+        margin-bottom: 10px;
+    }
+
+    footer ul li a {
+        color: #bfbfbf;
+        text-decoration: none;
+        transition: .3s;
+        display: inline-block;
+    }
+
+    footer ul li a:hover {
+        color: #f48840;
+        transform: translateX(5px);
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255,255,255,.15);
+        margin-top: 40px;
+        padding-top: 20px;
+        text-align: center;
+    }
+
+    .footer-bottom p {
+        color: #bfbfbf;
+        margin: 0;
+        line-height: 28px;
+        font-size: 15px;
+    }
+
+    .footer-bottom a {
+        color: #f48840;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .footer-bottom a:hover {
+        color: #fff;
+    }
+
+    @media (max-width:991px) {
+        footer {
+            text-align: center;
+        }
+
+        footer .col-lg-3,
+        footer .col-md-6 {
+            margin-bottom: 35px;
+        }
+
+        footer ul li a:hover {
+            transform: none;
+        }
+    }
+
+    @media (max-width:576px) {
+        footer {
+            padding: 45px 0 20px;
+        }
+
+        footer h4 {
+            font-size: 17px;
+        }
+
+        footer ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-bottom p {
+            font-size: 14px;
+        }
+    }
+</style>
+
+<footer>
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-3 col-md-6">
+                <h4>Pages</h4>
+                <ul>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'blog' %}">Blog</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h4>Account</h4>
+                <ul>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                        <li><a href="{% url 'create' %}">Create</a></li>
+                        <li><a href="{% url 'profile' user.id %}">Profile</a></li>
+                    {% else %}
+                        <li><a href="{% url 'signin' %}">Login</a></li>
+                        <li><a href="{% url 'signup' %}">Signup</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="{% url 'blog' %}">Our Story</a></li>
+                    <li><a href="#">Find a Stockist</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="https://github.com/SuyogChavan2005" target="_blank">GitHub</a></li>
+                    <li><a href="https://suyog-chavan-portfolio.vercel.app/" target="_blank">Portfolio</a></li>
+                    <li><a href="https://www.linkedin.com/in/suyogchavan2005/" target="_blank">LinkedIn</a></li>
+                    <li><a href="https://www.youtube.com/@suyogchavan2005" target="_blank">YouTube</a></li>
+                    <li><a href="https://www.facebook.com/SuyogChavan2005/" target="_blank">Facebook</a></li>
+                    <li><a href="https://www.instagram.com/heyits_suyog/" target="_blank">Instagram</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                Developed  by
+                <a href="https://suyog-chavan-portfolio.vercel.app/" target="_blank">
+                    Suyog Chavan
+                </a>
+                <br>
+                &copy; {% now "Y" %} All Rights Reserved.
+            </p>
+        </div>
+
+    </div>
+</footer>
