@@ -6,7 +6,7 @@
 A Blog application in Django contains all the features of a Blog site like login/register into the system, add blog post with title, description and image and edit or delete the blog post.
 
 
-  <a href="https://blogs-n2mq.onrender.com/"><strong>➥ Live Demo</strong></a>
+  <a href="[https://blogs-n2mq.onrender.com/](https://django-blog-website-tcn7.onrender.com/)"><strong>➥ Live Demo</strong></a>
 
 </div>
 
