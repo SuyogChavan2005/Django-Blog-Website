@@ -279,12 +279,12 @@ HOST_USER_RECIPIENT = os.getenv(
 
 
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = "chavansuyog2001@gmail.com"
 
 
 
 # SMTP timeout
-EMAIL_TIMEOUT = 120
+EMAIL_TIMEOUT = 10
 
 
 
