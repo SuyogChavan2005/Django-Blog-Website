@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
-import threading
 
 from .models import *
 
@@ -459,69 +458,33 @@ def deletepost(request,id):
 
 
 # =================================================
-# SEND EMAIL FUNCTION (BACKGROUND THREAD)
+# SEND EMAIL FUNCTION
 # =================================================
 
-def send_contact_email(name,email,subject,message):
+def send_contact_email(name, email, subject, message):
 
-    try:
-
-
-        email_body=f"""
-
+    email_body = f"""
 New Contact Form Submission
 
+Name: {name}
 
-Name:
-{name}
+Email: {email}
 
-
-Email:
-{email}
-
-
-Subject:
-{subject}
-
+Subject: {subject}
 
 Message:
 {message}
-
 """
 
+    result = send_mail(
+        subject=f"New Contact Form: {subject}",
+        message=email_body,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[settings.HOST_USER_RECIPIENT],
+        fail_silently=False,
+    )
 
-        send_mail(
-
-            subject=f"New Contact Form: {subject}",
-
-            message=email_body,
-
-            from_email=settings.DEFAULT_FROM_EMAIL,
-
-            recipient_list=[
-                settings.HOST_USER_RECIPIENT
-            ],
-
-            fail_silently=False
-
-        )
-
-
-        print(
-            "EMAIL SENT SUCCESSFULLY"
-        )
-
-
-    except Exception as e:
-
-
-        print(
-            "EMAIL ERROR:",
-            e
-        )
-
-
-
+    print("send_mail() returned:", result)
 
 # ===============================
 # CONTACT PAGE
@@ -529,89 +492,43 @@ Message:
 
 def contact_us(request):
 
-    if request.method=="POST":
+    if request.method == "POST":
 
-
-        name=request.POST.get("name")
-
-        email=request.POST.get("email")
-
-        subject=request.POST.get("subject")
-
-        message=request.POST.get("message")
-
-
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
 
         try:
 
-
+            # Save contact in database
             Contact.objects.create(
-
                 name=name,
-
                 email=email,
-
                 subject=subject,
-
                 message=message
-
             )
 
-
-
-            thread=threading.Thread(
-
-                target=send_contact_email,
-
-                args=(
-
-                    name,
-
-                    email,
-
-                    subject,
-
-                    message
-
-                )
-
+            # Send email directly
+            send_contact_email(
+                name=name,
+                email=email,
+                subject=subject,
+                message=message
             )
-
-
-            thread.start()
-
-
 
             messages.success(
-
                 request,
-
-                "Thanks for contacting us!"
-
+                "Thanks for contacting us! Your message has been sent successfully."
             )
-
-
 
         except Exception as e:
 
-
-            print(
-                "CONTACT ERROR:",
-                e
-            )
-
+            print("CONTACT ERROR:", e)
 
             messages.error(
-
                 request,
-
-                "Something went wrong."
-
+                f"Error: {e}"
             )
 
-
-
-    return render(
-        request,
-        "contact.html"
-    )
+    return render(request, "contact.html")
